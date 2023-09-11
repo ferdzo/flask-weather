@@ -1,11 +1,14 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, request
 import requests
 
-app = Flask(__name__)
-app.config['DEBUG'] = True
-API_KEY = ''
+load_dotenv()
+API_KEY = os.getenv('WEATHER_API_KEY')
 API_URL = 'http://api.openweathermap.org/data/2.5/weather?q={}&&appid={}'
 
+app = Flask(__name__)
+app.config['DEBUG'] = True
 
 def degToCompass(num):
     val = int((num / 22.5) + .5)
@@ -38,6 +41,7 @@ def main():
 
 def getWeather(city):
     r = requests.get(API_URL.format(city, API_KEY)).json()
+    print(r)
     weather = {
         'city': city,
         'country': r['sys']['country'],
@@ -52,5 +56,5 @@ def getWeather(city):
         'wind_dir': degToCompass(r['wind']['deg']),
 
     }
-    print(r)
+    print(weather)
     return weather
